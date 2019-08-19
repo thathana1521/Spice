@@ -38,7 +38,7 @@
                             <div class="dropdown-menu" aria-labelledby="navBarDropDownMenuLink">
                                 <a class="dropdown-item" asp-action="Index" asp-controller="Category" asp-area="Admin">Category</a>
                                 <a class="dropdown-item" asp-action="Index" asp-controller="SubCategory" asp-area="Admin">SubCategory</a>
-                                <a class="dropdown-item">MenuItem</a>
+                                <a class="dropdown-item" asp-action="Index" asp-controller="MenuItem" asp-area="Admin">MenuItem</a>
                                 <a class="dropdown-item">Coupons</a>
                                 <a class="dropdown-item">Users</a>
                             </div>
@@ -68,10 +68,13 @@
     </footer>
 
     <environment include="Development">
+        <script src="https://cdn.tiny.cloud/1/7fm81jza7hhjo6ze45ms6lqe4xky1zvsgolb59y0lptd93k4/tinymce/5/tinymce.min.js"></script>
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
     </environment>
     <environment exclude="Development">
+        <script src="https://cdn.tiny.cloud/1/7fm81jza7hhjo6ze45ms6lqe4xky1zvsgolb59y0lptd93k4/tinymce/5/tinymce.min.js"></script>
+
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
                 asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
                 asp-fallback-test="window.jQuery"
