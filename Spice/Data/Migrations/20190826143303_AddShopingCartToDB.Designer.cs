@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Spice.Data;
 
 namespace Spice.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190826143303_AddShopingCartToDB")]
+    partial class AddShopingCartToDB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -254,75 +256,6 @@ namespace Spice.Data.Migrations
                     b.ToTable("MenuItem");
                 });
 
-            modelBuilder.Entity("Spice.Models.OrderDetails", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("Count");
-
-                    b.Property<string>("Description");
-
-                    b.Property<int>("MenuItemId");
-
-                    b.Property<string>("Name");
-
-                    b.Property<int>("OrderId");
-
-                    b.Property<double>("Price");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MenuItemId");
-
-                    b.HasIndex("OrderId");
-
-                    b.ToTable("OrderDetails");
-                });
-
-            modelBuilder.Entity("Spice.Models.OrderHeader", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Comments");
-
-                    b.Property<string>("CouponCode");
-
-                    b.Property<double>("CouponCodeDiscount");
-
-                    b.Property<DateTime>("OrderDate");
-
-                    b.Property<double>("OrderTotal");
-
-                    b.Property<double>("OrderTotalOriginal");
-
-                    b.Property<string>("PaymentStatus");
-
-                    b.Property<string>("PhoneNumber");
-
-                    b.Property<DateTime>("PickUpTime");
-
-                    b.Property<string>("PickupName");
-
-                    b.Property<string>("PickupPhone");
-
-                    b.Property<string>("Status");
-
-                    b.Property<string>("TransactionId");
-
-                    b.Property<string>("UserId")
-                        .IsRequired();
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("OrderHeader");
-                });
-
             modelBuilder.Entity("Spice.Models.ShoppingCart", b =>
                 {
                     b.Property<int>("Id")
@@ -430,27 +363,6 @@ namespace Spice.Data.Migrations
                     b.HasOne("Spice.Models.SubCategory", "SubCategory")
                         .WithMany()
                         .HasForeignKey("SubCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Spice.Models.OrderDetails", b =>
-                {
-                    b.HasOne("Spice.Models.MenuItem", "MenuItem")
-                        .WithMany()
-                        .HasForeignKey("MenuItemId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Spice.Models.OrderHeader", "OrderHeader")
-                        .WithMany()
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Spice.Models.OrderHeader", b =>
-                {
-                    b.HasOne("Spice.Models.ApplicationUser", "ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

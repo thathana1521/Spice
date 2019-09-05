@@ -1,4 +1,6 @@
-﻿@using Spice.Utility
+﻿@using Microsoft.AspNetCore.Http
+@using Spice.Utility
+@inject  IHttpContextAccessor HttpContextAccessor
 
 <!DOCTYPE html>
 <html>
@@ -8,10 +10,13 @@
     <title>@ViewData["Title"] - Spice</title>
 
     <environment include="Development">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.css" />
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/css/jquery-ui.css" />
         <script src="https://kit.fontawesome.com/c141d8e69d.js"></script>
     </environment>
     <environment exclude="Development">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.css" />
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
               asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute"
@@ -20,6 +25,7 @@
         <script src="https://kit.fontawesome.com/c141d8e69d.js"></script>
     </environment>
     <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/jquery-ui.css" />
 </head>
 <body class="search-background">
     <header>
@@ -38,26 +44,73 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <partial name="_LoginPartial" />
                     <ul class="navbar-nav flex-grow-1">
-                        @if (User.IsInRole(SD.ManagerUser)) { 
+                        @if (User.IsInRole(SD.ManagerUser))
+                        {
 
-                        <li class="nav-item dropdown text-white-50">
-                            <a class="nav-link dropdown-toggle" href="#" id="navBarDropDownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="True" aria-expanded="False">
-                                Content Management
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navBarDropDownMenuLink">
-                                <a class="dropdown-item" asp-action="Index" asp-controller="Category" asp-area="Admin">Category</a>
-                                <a class="dropdown-item" asp-action="Index" asp-controller="SubCategory" asp-area="Admin">SubCategory</a>
-                                <a class="dropdown-item" asp-action="Index" asp-controller="MenuItem" asp-area="Admin">MenuItem</a>
-                                <a class="dropdown-item" asp-action="Index" asp-controller="Coupon" asp-area="Admin">Coupons</a>
-                                <a class="dropdown-item" asp-action="Index" asp-controller="User" asp-area="Admin">Users</a>
-                            </div>
-                        </li>
+                            <li class="nav-item dropdown text-white-50">
+                                <a class="nav-link dropdown-toggle" href="#" id="navBarDropDownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="True" aria-expanded="False">
+                                    Content Management
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navBarDropDownMenuLink">
+                                    <a class="dropdown-item" asp-action="Index" asp-controller="Category" asp-area="Admin">Category</a>
+                                    <a class="dropdown-item" asp-action="Index" asp-controller="SubCategory" asp-area="Admin">SubCategory</a>
+                                    <a class="dropdown-item" asp-action="Index" asp-controller="MenuItem" asp-area="Admin">MenuItem</a>
+                                    <a class="dropdown-item" asp-action="Index" asp-controller="Coupon" asp-area="Admin">Coupons</a>
+                                    <a class="dropdown-item" asp-action="Index" asp-controller="User" asp-area="Admin">Users</a>
+                                </div>
+                            </li>
                         }
-                        <li style="color: white">
-                            <a href="#" class="nav-link">
-                                <i class="fas fa-shopping-cart"></i> &nbsp; (0)
-                            </a>
-                        </li>
+
+                        @if (User.IsInRole(SD.ManagerUser) || User.IsInRole(SD.CustomerEndUser) || User.IsInRole(SD.FrontDeskUser) || User.IsInRole(SD.KitchenUser))
+                        {
+                            <li class="nav-item">
+                                <a asp-area="Customer" asp-controller="Order" asp-action="OrderHistory" class="nav-link">
+                                   Order History
+                                </a>
+                            </li>
+                        }
+                        
+                        @if (User.IsInRole(SD.FrontDeskUser) ||User.IsInRole(SD.KitchenUser) || User.IsInRole(SD.ManagerUser))
+                        {
+
+                            <li class="nav-item dropdown text-white-50">
+                                <a class="nav-link dropdown-toggle" href="#" id="navBarDropDown" role="button" data-toggle="dropdown" aria-haspopup="True" aria-expanded="False">
+                                    Order
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navBarDropDownMenuLink">
+                                    @if (User.IsInRole(SD.KitchenUser) || User.IsInRole(SD.ManagerUser))
+                                    {
+                                        <a class="dropdown-item" asp-action="ManageOrder" asp-controller="Order" asp-area="Customer">Manage Order</a>
+                                    }
+                                    @if (User.IsInRole(SD.FrontDeskUser) || User.IsInRole(SD.ManagerUser)) { 
+                                        <a class="dropdown-item" asp-action="OrderPickup" asp-controller="Order" asp-area="Customer">Order Pickup</a>
+                                    }
+                                </div>
+                            </li>
+                        }
+
+                        @if (HttpContextAccessor.HttpContext.Session.GetInt32(SD.ssShopingCartCount) != null)
+                        {
+                            <li style="color: white">
+                                <a asp-area="Customer" asp-controller="Cart" asp-action="Index" class="nav-link">
+                                    @{
+                                        var count = HttpContextAccessor.HttpContext.Session.GetInt32(SD.ssShopingCartCount);
+                                    }
+                                    <i class="fas fa-shopping-cart"></i> &nbsp; (@count)
+                                </a>
+                            </li>
+
+
+                        }
+                        else
+                        {
+                            <li style="color: white">
+                                <a href="#" class="nav-link">
+                                    <i class="fas fa-shopping-cart"></i> &nbsp; (0)
+                                </a>
+                            </li>
+                        }
+
                     </ul>
                 </div>
             </div>
@@ -80,6 +133,7 @@
         <script src="https://cdn.tiny.cloud/1/7fm81jza7hhjo6ze45ms6lqe4xky1zvsgolb59y0lptd93k4/tinymce/5/tinymce.min.js"></script>
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+        <script src="~/js/jquery-ui.js"></script>
     </environment>
     <environment exclude="Development">
         <script src="https://cdn.tiny.cloud/1/7fm81jza7hhjo6ze45ms6lqe4xky1zvsgolb59y0lptd93k4/tinymce/5/tinymce.min.js"></script>
@@ -96,9 +150,11 @@
                 crossorigin="anonymous"
                 integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o">
         </script>
+        <script src="~/js/jquery-ui.js"></script>
     </environment>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     @RenderSection("Scripts", required: false)
 </body>
 </html>
+
