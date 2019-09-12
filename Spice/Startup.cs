@@ -8,11 +8,13 @@ using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Spice.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Spice.Service;
 using Spice.Utility;
 using Stripe;
 
@@ -46,10 +48,23 @@ namespace Spice
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.Configure<StripeSettings>(Configuration.GetSection("Stripe"));
+            services.AddSingleton<IEmailSender, EmailSender>();
+            services.Configure<EmailOptions>(Configuration);
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
+            services.AddAuthentication().AddFacebook(facebookOptions =>
+            {
+                facebookOptions.AppId = "684209515432665";
+                facebookOptions.AppSecret = "c11f414ed6a6b29585f4912b3c97017e";
+            });
+
+            services.AddAuthentication().AddGoogle(googleOptions =>
+            {
+                googleOptions.ClientId = "655556199714-ujvg8o5ksjd9nh8tbcab4qb42ju4db2d.apps.googleusercontent.com";
+                googleOptions.ClientSecret = "360ncjEkhYNE6xnA6mn3uRpz";
+            });
             services.AddSession(options =>
             {
                 options.Cookie.IsEssential = true;
